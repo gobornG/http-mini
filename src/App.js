@@ -105,16 +105,15 @@ class App extends Component {
       })
   }
 
-  updatePrice(priceChange) {
+  updatePrice(priceChange, id) {
     // axios (PUT)
     // setState with response -> vehiclesToDisplay
     
-    return axios.put('https://joes-autos.herokuapp.com/api/vehicles/', priceChange)
+     axios.put('https://joes-autos.herokuapp.com/api/vehicles/' + id + '/' + priceChange)
       .then(res => {
-        console.log(res);
         if (res.status === 200) {
           ToastStore.success('Success', 3000);
-          this.setState({ vehiclesToDisplay: res.data.priceChange})
+          this.setState({ vehiclesToDisplay: res.data.vehicles});
         } else {
           ToastStore.error('Uh, oh! we got code issues!', 3000)
         }
@@ -131,6 +130,15 @@ class App extends Component {
     }
     // axios (POST)
     // setState with response -> vehiclesToDisplay
+    axios.post('https://joes-autos.herokuapp.com/api/vehicles/', newCar)
+      .then(res => {
+        if (res.status === 200) {
+          ToastStore.success('Success', 3000);
+          this.setState({vehiclesToDisplay: res.data.vehicles});
+        } else {
+          ToastStore.error('Uh, oh! we got code issues!', 3000)
+        }
+      })
   }
 
   addBuyer() {
@@ -141,18 +149,45 @@ class App extends Component {
     }
     //axios (POST)
     // setState with response -> buyersToDisplay
+    axios.post('https://joes-autos.herokuapp.com/api/buyers/', newBuyer)
+      .then(res => {
+        if (res.status === 200) {
+          ToastStore.success('Success', 3000);
+          this.setState({buyersToDisplay: res.data.buyers});
+        } else {
+          ToastStore.error('Uh, oh! we got code issues!', 3000)
+        }
+      })
   }
 
   nameSearch() {
     // axios (GET)
     // setState with response -> buyersToDisplay
     let searchLetters = this.refs.searchLetters.value;
+    axios.get('https://joes-autos.herokuapp.com/api/buyers?name=' + searchLetters )
+      .then(res => {
+        if (res.status === 200) {
+          ToastStore.success('Success', 3000);
+          this.setState({ buyersToDisplay: res.data });
+        } else {
+          ToastStore.error('Uh, oh! we got code issues!', 3000)
+        }
+      })
   }
 
   byYear() {
-    let year = this.refs.year.value;
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    let year = this.refs.year.value;
+    axios.get('https://joes-autos.herokuapp.com/api/vehicles?year=' + year )
+      .then(res => {
+        if (res.status === 200) {
+          ToastStore.success('Success', 3000);
+          this.setState({ vehiclesToDisplay: res.data });
+        } else {
+          ToastStore.error('Uh, oh! we got code issues!', 3000)
+        }
+      })
   }
 
   // ==============================================
@@ -186,11 +221,11 @@ class App extends Component {
           <p>Price: {v.price}</p>
           <button
             className='btn btn-sp'
-            onClick={() => this.updatePrice('up')}
+            onClick={() => this.updatePrice('up', v.id)}
           >Increase Price</button>
           <button
             className='btn btn-sp'
-            onClick={() => this.updatePrice('down')}
+            onClick={() => this.updatePrice('down', v.id)}
           >Decrease Price</button>
           <button
             className='btn btn-sp'
